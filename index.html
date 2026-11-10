@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="my">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6b4c8a">
+<title>Smart Invitation Maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#282333;--muted:#766f80;--accent:#805aa6;--paper:#fffdf9;--line:#eee8f2}
+*{box-sizing:border-box}body{margin:0;background:#f6f3f8;color:var(--ink);font-family:"Noto Sans Myanmar",system-ui,sans-serif}
+header{background:linear-gradient(120deg,#52396f,#936eae);color:white;padding:20px 18px 24px}
+.head{max-width:1100px;margin:auto}.brand{font:600 21px "Playfair Display",serif;letter-spacing:.2px}.tag{font-size:12px;opacity:.85;margin-top:5px}
+main{max-width:1100px;margin:18px auto;padding:0 14px 40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.9fr);gap:18px}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 8px 28px #3e28500b}
+h2{font-size:16px;margin:0 0 14px}.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.type{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 4px;font:inherit;font-size:12px;cursor:pointer;color:var(--ink)}
+.type.active{border-color:var(--accent);background:#f5effa;color:#68438c;font-weight:700}
+label{display:block;font-size:12px;color:#625a6a;margin:11px 0 5px}
+input,textarea,select{width:100%;border:1px solid #e5deea;border-radius:10px;padding:11px 12px;font:inherit;font-size:14px;color:var(--ink);background:#fff;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#9a79b5;box-shadow:0 0 0 3px #9a79b51c}
+textarea{resize:vertical;min-height:72px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.preview-panel{position:sticky;top:12px;align-self:start}.preview-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.preview-title small{color:var(--muted);font-size:11px}
+#invite{width:100%;aspect-ratio:4/5;min-height:390px;position:relative;overflow:hidden;border-radius:14px;padding:28px 20px;display:flex;align-items:center;justify-content:center;text-align:center;background:#fff8f1;color:#543b47;border:8px double #d8b77c}
+#invite:before,#invite:after{content:"✦";position:absolute;color:#c59d60;font-size:30px}#invite:before{top:13px;left:17px}#invite:after{bottom:13px;right:17px}
+.inner{width:100%;position:relative;z-index:1}.eyebrow{font-size:11px;letter-spacing:2px;color:#a17a43;margin-bottom:15px}.ornament{font-size:24px;color:#c59d60;margin:9px}
+#invite h1{font-size:clamp(22px,5vw,34px);line-height:1.5;margin:8px 0;font-weight:700}
+#invite .names{font-size:clamp(19px,4.5vw,27px);line-height:1.6;font-weight:700;margin:8px 0}
+#invite .bodycopy{font-size:clamp(12px,2.8vw,15px);line-height:2;margin:12px auto;max-width:95%}
+#invite .details{font-size:clamp(12px,2.8vw,15px);line-height:2.1;margin:15px 0;white-space:pre-line}
+#invite .host{font-size:12px;line-height:1.8;margin-top:15px;color:#846a57}
+#invite.theme-rose{background:#fff4f4;color:#71444f;border-color:#d8a2ad}#invite.theme-rose:before,#invite.theme-rose:after{color:#c17e8d}
+#invite.theme-green{background:#f3f7ef;color:#3d5947;border-color:#9bb59b}#invite.theme-green:before,#invite.theme-green:after{color:#729579}
+#invite.theme-blue{background:#f1f6fc;color:#38516b;border-color:#9ab5d1}#invite.theme-blue:before,#invite.theme-blue:after{color:#7599bf}
+#invite.theme-dark{background:#292333;color:#f7e9c9;border-color:#c5a66a}#invite.theme-dark:before,#invite.theme-dark:after{color:#d8b77c}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+button.action{border:0;border-radius:11px;padding:12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.primary{background:#6d4b8d;color:white}.secondary{background:#f1ebf6;color:#68458a}
+.note{font-size:11px;color:#837b89;line-height:1.7;margin-top:12px}
+@media(max-width:760px){main{grid-template-columns:1fr}.preview-panel{position:static;grid-row:1}.panel.form-panel{grid-row:2}#invite{min-height:370px;max-width:480px;margin:auto}.preview-panel{padding:13px}.row{gap:8px}}
+@media(max-width:380px){.row{grid-template-columns:1fr}.types{gap:5px}.type{font-size:11px}}
+</style>
+</head>
+<body>
+<header><div class="head"><div class="brand">✦ Smart Invitation Maker</div><div class="tag">ကိုယ်ပိုင်ဖိတ်စာကို လွယ်လွယ်ကူကူ ဖန်တီးပါ</div></div></header>
+<main>
+<section class="panel form-panel">
+<h2>ဖိတ်စာအချက်အလက်</h2>
+<div class="types">
+<button class="type active" data-type="birthday">🎂 မွေးနေ့</button>
+<button class="type" data-type="donation">🙏 အလှူ</button>
+<button class="type" data-type="wedding">💍 မင်္ဂလာ</button>
+</div>
+<label>ဒီဇိုင်းအရောင်</label>
+<select id="theme"><option value="classic">ရွှေရောင် ဂန္ထဝင်</option><option value="rose">ပန်းရောင် နူးညံ့</option><option value="green">သဘာဝ အစိမ်း</option><option value="blue">အပြာရောင် သန့်ရှင်း</option><option value="dark">အနက်ရောင် ဇိမ်ခံ</option></select>
+<div id="fields"></div>
+<label>အပိုစာသား (မထည့်လည်းရ)</label><textarea id="extra" placeholder="ဥပမာ - ကြွရောက်ချီးမြှင့်ပေးပါရန် လေးစားစွာ ဖိတ်ကြားအပ်ပါသည်။"></textarea>
+</section>
+<section class="panel preview-panel">
+<div class="preview-title"><h2 style="margin:0">ဖိတ်စာ နမူနာ</h2><small>ပြင်ဆင်သည်နှင့် ပြောင်းလဲမည်</small></div>
+<div id="invite"><div class="inner">
+<div class="eyebrow" id="eyebrow">YOU ARE INVITED</div><div class="ornament">❦</div>
+<h1 id="headline">မွေးနေ့ပွဲသို့ ဖိတ်ကြားခြင်း</h1>
+<div class="names" id="names">မွေးနေ့ရှင်အမည်</div>
+<div class="bodycopy" id="copy">ချစ်ခင်ရသူများနှင့်အတူ ပျော်ရွှင်ဖွယ်အချိန်လေးကို ဖြတ်သန်းနိုင်ရန် ဖိတ်ကြားအပ်ပါသည်။</div>
+<div class="ornament">✧</div><div class="details" id="details">နေ့ရက် • အချိန် • နေရာ</div>
+<div class="host" id="host">ဖိတ်ကြားသူ</div>
+</div></div>
+<div class="actions"><button class="action primary" id="png">↓ PNG သိမ်းမည်</button><button class="action secondary" id="pdf">▤ PDF ထုတ်မည်</button></div>
+<div class="note">မှတ်ချက် - PNG ထုတ်ရန် အင်တာနက်ချိတ်ဆက်ထားပါက ပိုမိုအဆင်ပြေပါသည်။ PDF ကို Print မှတစ်ဆင့် Save as PDF ရွေးနိုင်ပါသည်။</div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+const defs={
+ birthday:{headline:"မွေးနေ့ပွဲသို့ ဖိတ်ကြားခြင်း",copy:"ချစ်ခင်ရသူများနှင့်အတူ ပျော်ရွှင်ဖွယ်အချိန်လေးကို ဖြတ်သန်းနိုင်ရန် ကြွရောက်ချီးမြှင့်ပေးပါရန် ဖိတ်ကြားအပ်ပါသည်။",fields:[["name","မွေးနေ့ရှင်အမည်","အမည်ထည့်ပါ"],["age","အသက် (Optional)","ဥပမာ - ၂၅ နှစ်"],["date","နေ့ရက်",""],["time","အချိန်",""],["place","ကျင်းပမည့်နေရာ","နေရာအမည်"],["host","ဖိတ်ကြားသူ",""]] },
+ donation:{headline:"အလှူမင်္ဂလာသို့ ဖိတ်ကြားခြင်း",copy:"မင်္ဂလာရှိသော ကုသိုလ်အလှူတွင် ပါဝင်ချီးမြှင့်နိုင်ပါရန် လေးစားစွာ ဖိတ်ကြားအပ်ပါသည်။",fields:[["name","အလှူရှင်အမည်","အမည်ထည့်ပါ"],["kind","အလှူအမျိုးအစား","ဥပမာ - ဆွမ်းလောင်းလှူပွဲ"],["date","နေ့ရက်",""],["time","အချိန်",""],["place","ကျင်းပမည့်နေရာ","နေရာအမည်"],["host","ဖိတ်ကြားသူ",""]] },
+ wedding:{headline:"မင်္ဂလာဧည့်ခံပွဲသို့ ဖိတ်ကြားခြင်း",copy:"မင်္ဂလာရှိသော နေ့ထူးနေ့မြတ်လေးတွင် ကြွရောက်ချီးမြှင့်ပေးပါရန် လေးစားစွာ ဖိတ်ကြားအပ်ပါသည်။",fields:[["groom","သတို့သားအမည်","အမည်ထည့်ပါ"],["bride","သတို့သမီးအမည်","အမည်ထည့်ပါ"],["parents","မိဘအမည် (Optional)",""],["date","နေ့ရက်",""],["time","အချိန်",""],["place","မင်္ဂလာပွဲနေရာ","နေရာအမည်"],["host","ဖိတ်ကြားသူ",""]] }
+};
+let type="birthday";
+const fields=document.getElementById("fields");
+function renderFields(){fields.innerHTML=defs[type].fields.map(([id,label,ph])=>`<label>${label}</label><input id="${id}" placeholder="${ph}" ${id==="date"?'type="date"':id==="time"?'type="time"':'type="text"'}>`).join("");fields.querySelectorAll("input").forEach(x=>x.addEventListener("input",update));update()}
+document.querySelectorAll(".type").forEach(b=>b.onclick=()=>{type=b.dataset.type;document.querySelectorAll(".type").forEach(x=>x.classList.toggle("active",x===b));renderFields()});
+const val=id=>document.getElementById(id)?.value.trim()||"";
+function update(){
+ const d=defs[type],name=type==="wedding"?[val("groom"),val("bride")].filter(Boolean).join(" ♥ "):val("name");
+ document.getElementById("headline").textContent=d.headline;
+ document.getElementById("names").textContent=name||(type==="wedding"?"သတို့သား ♥ သတို့သမီး":type==="donation"?"အလှူရှင်အမည်":"မွေးနေ့ရှင်အမည်");
+ document.getElementById("copy").textContent=d.copy;
+ let date=val("date");if(date){const dt=new Date(date+"T00:00:00");date=new Intl.DateTimeFormat("my-MM",{day:"numeric",month:"long",year:"numeric"}).format(dt)}
+ const time=val("time");const place=val("place");
+ document.getElementById("details").textContent=[date,time,place].filter(Boolean).join("\n")||"နေ့ရက် • အချိန် • နေရာ";
+ let host=val("host");if(type==="birthday"&&val("age"))host+="\nအသက် "+val("age");if(type==="donation"&&val("kind"))host+="\n"+val("kind");if(type==="wedding"&&val("parents"))host=val("parents")+"\n"+host;
+ document.getElementById("host").textContent=host||"ဖိတ်ကြားသူ";
+ const extra=val("extra");document.getElementById("copy").textContent=d.copy+(extra?"\n"+extra:"");
+}
+document.getElementById("theme").onchange=e=>{document.getElementById("invite").className=e.target.value==="classic"?"": "theme-"+e.target.value};
+document.getElementById("extra").addEventListener("input",update);
+document.getElementById("png").onclick=async()=>{const btn=document.getElementById("png");if(!window.html2canvas){alert("PNG ထုတ်ရန် အင်တာနက်ချိတ်ဆက်ပြီး ပြန်ကြိုးစားပါ။");return}btn.disabled=true;btn.textContent="ပြင်ဆင်နေသည်…";try{await document.fonts.ready;const c=await html2canvas(document.getElementById("invite"),{scale:3,backgroundColor:null,useCORS:true});const a=document.createElement("a");a.download="smart-invitation.png";a.href=c.toDataURL("image/png");a.click()}catch(e){alert("PNG ထုတ်မရပါ။ ပြန်ကြိုးစားပါ။")}finally{btn.disabled=false;btn.textContent="↓ PNG သိမ်းမည်"}};
+document.getElementById("pdf").onclick=()=>{const node=document.getElementById("invite"),w=window.open("","_blank");if(!w){alert("Pop-up ခွင့်ပြုပေးပါ။");return}w.document.write(`<html lang="my"><head><meta charset="utf-8"><title>Invitation</title><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap" rel="stylesheet"><style>@page{size:A5 portrait;margin:12mm}body{font-family:'Noto Sans Myanmar',sans-serif;display:grid;place-items:center;min-height:90vh}#invite{width:100%;max-width:130mm;aspect-ratio:4/5;box-sizing:border-box;margin:auto}</style></head><body>${node.outerHTML}<script>window.onload=()=>setTimeout(()=>window.print(),700)<\/script></body></html>`);w.document.close()};
+renderFields();
+</script>
+</body></html>
