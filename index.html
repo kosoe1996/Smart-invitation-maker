@@ -97,7 +97,34 @@ function update(){
 }
 document.getElementById("theme").onchange=e=>{document.getElementById("invite").className=e.target.value==="classic"?"": "theme-"+e.target.value};
 document.getElementById("extra").addEventListener("input",update);
-document.getElementById("png").onclick=async()=>{const btn=document.getElementById("png");if(!window.html2canvas){alert("PNG ထုတ်ရန် အင်တာနက်ချိတ်ဆက်ပြီး ပြန်ကြိုးစားပါ။");return}btn.disabled=true;btn.textContent="ပြင်ဆင်နေသည်…";try{await document.fonts.ready;const c=await html2canvas(document.getElementById("invite"),{scale:3,backgroundColor:null,useCORS:true});const a=document.createElement("a");a.download="smart-invitation.png";a.href=c.toDataURL("image/png");a.click()}catch(e){alert("PNG ထုတ်မရပါ။ ပြန်ကြိုးစားပါ။")}finally{btn.disabled=false;btn.textContent="↓ PNG သိမ်းမည်"}};
+document.getElementById("png").onclick=async()=>{
+ const btn=document.getElementById("png");
+ if(!window.html2canvas){alert("PNG ဖန်တီးတဲ့ Library မဖွင့်နိုင်သေးပါ။ Safari မှာ Website ကို ပြန်ဖွင့်ပြီး စမ်းပါ။");return}
+ // Open the result tab during the tap; iPhone Safari often ignores download links.
+ const resultTab=window.open("about:blank","_blank");
+ btn.disabled=true;btn.textContent="PNG ပြင်ဆင်နေသည်…";
+ try{
+   await document.fonts.ready;
+   const c=await html2canvas(document.getElementById("invite"),{scale:3,backgroundColor:null,useCORS:true,logging:false});
+   const blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("PNG conversion failed")),"image/png"));
+   const url=URL.createObjectURL(blob);
+   if(resultTab && !resultTab.closed){
+     resultTab.document.open();
+     resultTab.document.write('<!doctype html><html lang="my"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Invitation PNG</title><style>body{margin:0;padding:16px;background:#f4f1f6;font-family:Arial,sans-serif;text-align:center}img{display:block;width:100%;height:auto;max-width:700px;margin:18px auto;border-radius:8px}p{font-size:15px;line-height:1.7;color:#43384b}</style><p>PNG ဖိတ်စာ အဆင်သင့်ဖြစ်ပါပြီ။ ပုံကို ဖိထားပြီး Save to Photos ကိုရွေးပါ။</p><img id="resultImage" alt="Invitation PNG"><p>iPhone တွင် ပုံကို ဖိထားပါ → Save to Photos</p></html>');
+     resultTab.document.close();
+     resultTab.document.getElementById("resultImage").src=url;
+   }else if(navigator.canShare && navigator.share){
+     const file=new File([blob],"smart-invitation.png",{type:"image/png"});
+     if(navigator.canShare({files:[file]})) await navigator.share({files:[file],title:"Smart Invitation"});
+     else throw new Error("Sharing is not available");
+   }else{
+     const a=document.createElement("a");a.href=url;a.download="smart-invitation.png";document.body.appendChild(a);a.click();a.remove();
+   }
+ }catch(e){
+   if(resultTab && !resultTab.closed) resultTab.close();
+   alert("PNG မထုတ်နိုင်သေးပါ။ Safari မှာ တိုက်ရိုက်ဖွင့်ပြီး ထပ်စမ်းပါ။");
+ }finally{btn.disabled=false;btn.textContent="↓ PNG သိမ်းမည်"}
+};
 document.getElementById("pdf").onclick=()=>{const node=document.getElementById("invite"),w=window.open("","_blank");if(!w){alert("Pop-up ခွင့်ပြုပေးပါ။");return}w.document.write(`<html lang="my"><head><meta charset="utf-8"><title>Invitation</title><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap" rel="stylesheet"><style>@page{size:A5 portrait;margin:12mm}body{font-family:'Noto Sans Myanmar',sans-serif;display:grid;place-items:center;min-height:90vh}#invite{width:100%;max-width:130mm;aspect-ratio:4/5;box-sizing:border-box;margin:auto}</style></head><body>${node.outerHTML}<script>window.onload=()=>setTimeout(()=>window.print(),700)<\/script></body></html>`);w.document.close()};
 renderFields();
 </script>
